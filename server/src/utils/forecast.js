@@ -15,6 +15,7 @@
       callback("unable to find location . try another search.", undefined);
     } 
     else{
+      
       callback(
         undefined,
         body.current.weather_descriptions[0] +
@@ -22,7 +23,7 @@
         body.current.temperature +
           " F Temp out. it feels like " +
         body.current.feelslike +
-          " F Temp out."
+          " F Temp out. And Humidity is "+body.current.humidity+' with wind speed is '+body.current.wind_speed+'.'
       );
     }
   });
