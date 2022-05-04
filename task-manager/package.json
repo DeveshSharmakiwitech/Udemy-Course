@@ -1,0 +1,31 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mongodb.js",
+  "dependencies": {
+    "base64-js": "^1.5.1",
+    "bson": "^4.6.3",
+    "buffer": "^5.7.1",
+    "denque": "^2.0.1",
+    "ieee754": "^1.2.1",
+    "ip": "^1.1.5",
+    "memory-pager": "^1.5.0",
+    "mongodb": "^4.5.0",
+    "mongodb-connection-string-url": "^2.5.2",
+    "punycode": "^2.1.1",
+    "saslprep": "^1.0.3",
+    "smart-buffer": "^4.2.0",
+    "socks": "^2.6.2",
+    "sparse-bitfield": "^3.0.3",
+    "tr46": "^3.0.0",
+    "webidl-conversions": "^7.0.0",
+    "whatwg-url": "^11.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
