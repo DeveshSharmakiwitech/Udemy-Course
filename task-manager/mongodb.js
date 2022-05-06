@@ -1,10 +1,16 @@
 // CURD create read update delete
 
+const { toByteArray } = require('base64-js')
 const mongodb=require('mongodb')
 const MongoClient=mongodb.MongoClient
+const objectID=mongodb.ObjectID
+
+// const { MongoClient, objectID}= require('mongodb')
 
 const connectionURL='mongodb://127.0.0.1:27017'
 const databaseName='task-manager'
+
+const id=  objectID();
 
 MongoClient.connect(connectionURL,{ useNewUrlParser:true},(error,client)=>{
     if(error) {
@@ -13,31 +19,22 @@ MongoClient.connect(connectionURL,{ useNewUrlParser:true},(error,client)=>{
   
 
     const db = client.db(databaseName)
-  
-    // db.collection('users').insertOne({
-    //     name:'Devesh',
-    //     age:20
-    // },(error,result)=>{  
-    //     if(error){
-    //         return console.log('Unable to insert user')
-    //     }
-    //     console.log(result.ops)
+
+    // db.collection('users').deleteMany({
+    //     age:18
+    // }).then((result)=>{
+    //     console.log(result)
+    // }).catch((error)=>{
+    //     console.log(error)
     // })
 
-    db.collection('users').insertMany([
-        {
-            name:'ravi',
-            age:18
-        },
-        {
-            name:'kahna',
-            age:19
-        }
-    ],  (error,result) => {
-        if(error){
-             console.log('Unable to insert document!')
-        }
-           return console.log(result)
-    })
-    // return console.log(result.ops)
+    db.collection('task').deleteOne({
+        description:"clean tne house"
+    }).then((result)=>{
+            console.log(result)
+        }).catch((error)=>{
+            console.log(error)
+        })
+    
+  
 })
