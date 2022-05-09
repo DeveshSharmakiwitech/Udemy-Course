@@ -3,8 +3,9 @@ const mongoose=require('mongoose')
 // const { string, required } = require('yargs')
 
 mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api',{
-    useNewUrlParser:true
-    // useCreateIndex:true
+    useNewUrlParser:true,
+    // useCreateIndex:true  :- Not supported
+    // userFindAndModify:false   :- Not supported
 })
 
 
