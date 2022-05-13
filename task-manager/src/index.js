@@ -8,6 +8,21 @@ const taskrouter=require('./routers/task')
 const app=express()
 const port=process.env.PORT || 3000
 
+// app.use((req,res, next )=>{
+//     if(req.type === 'get'){
+//         res.send('Get requests are disabled!')
+       
+//     }
+//     else{ console.log('hi')
+//         next()
+//     }
+// })
+
+
+// app.use((req,res,next)=>{
+//     res.status(503).send('Site is currently down. Check back soon!')
+// })
+
 app.use(express.json())
 app.use(userrouter)
 app.use(taskrouter)
