@@ -33,19 +33,19 @@ app.listen(port,()=>{
 
 // const Task = require('./db/models/task')
 
-const main=async()=>{
-    // const task = await Task.findById('6284d8aeae6efdb24a7c0f61')
-    // await task.populate( 'owner' )         //.execPopulate(); :- this funtion is not used yet
-    // console.log(task.owner)
+// // const main=async()=>{
+// //     const task = await Task.findById('6284d8aeae6efdb24a7c0f61')
+// //     await task.populate( 'owner' )         //.execPopulate(); :- this funtion is not used yet
+// //     console.log(task.owner)
 
-    const user=await User.findById('6284d83c0de06cbcdebdfaf1')
-    await user.populate('tasks')
-    console.log(user.tasks)
+// //     const user=await User.findById('6284d83c0de06cbcdebdfaf1')
+// //     await user.populate('tasks')
+// //     console.log(user.tasks)
 
+// a
+// // }
 
-}
-
-main()
+// // main()
 
 
 // const pet ={
