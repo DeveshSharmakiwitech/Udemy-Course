@@ -13,18 +13,41 @@ const transport=nodemailer.createTransport({
 
 // Note:- Please click this usl first to run the program for 'Less security app access'
 
-const mailoptions={
-    from:'deveshsharma70888@gmail.com',
-    to:'deveshsharmajagariya@gmail.com',
-    subject:'Test node mail',
-    text:'I hope this one actually get to you.'
+const sendWelcomeEmail=(email,name)=>{
+    const mailoptions={
+        from:'devesh.sharma@kiwitech.com',
+        to:email,
+        subject:'Thanks for joining!',
+        text:`Welcome to the app, ${name}. Let me know how to get along with the app.`
+    }
+
+    transport.sendMail(mailoptions,function(error,info){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log('email has been send',info.response)
+        }
+    })
+   
 }
 
-transport.sendMail(mailoptions,function(error,info){
-    if(error){
-        console.log(error);
+const sendCancelationEmail=(email,name)=>{
+    const mailoptions={
+        from:'devesh.sharma@kiwitech.com',
+        to:email,
+        subject:'Sorry to see you go!',
+        text:`Goodbye, ${name}. I hope to see you back sometime soon.`
     }
-    else{
-        console.log('email has been send',info.response)
-    }
-})
+
+    transport.sendMail(mailoptions,function(error,info){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log('email has been send',info.response)
+        }
+    })
+}
+
+module.exports={sendWelcomeEmail,sendCancelationEmail}
