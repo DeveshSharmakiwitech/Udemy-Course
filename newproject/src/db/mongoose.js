@@ -5,4 +5,7 @@ const mongoose=require('mongoose')
 
 mongoose.connect('mongodb+srv://user:user.s@user.ildox.mongodb.net/newdb',{
     useNewUrlParser :true
-})
+},
+console.log("connected to database")
+)
+

@@ -1,6 +1,5 @@
 const express=require('express')
-// const user = require('../models/user')
-const User=require('../models/user')
+const { UserModel,userSchema } =require('../models/user')
 const router=new express.Router()
 
 
@@ -12,6 +11,17 @@ router.post('/user',async(req,res)=>{
         res.status(201).send(user)
     } catch(e){
         res.status(400).send(e)
+    }
+})
+
+router.post('/user/login',async(req,res)=>{
+    try{
+        const { rollnumber, password } = req.body;
+        const user= await userSchema.statics.findByCredentials(rollnumber, password)
+        const token=await user.generateAuthToken()
+        res.send({user,token})
+    } catch(err){
+        throw err;
     }
 })
 
