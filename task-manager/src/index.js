@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 require('./db/mongoose')
 const User=require('./db/models/user')
@@ -6,7 +7,7 @@ const userrouter=require('./routers/user')
 const taskrouter=require('./routers/task')
 
 const app=express()
-const port=process.env.PORT || 3000
+const port=process.env.PORT 
 
 // app.use((req,res, next )=>{
 //     if(req.type === 'get'){
@@ -59,11 +60,11 @@ app.use(userrouter)
 app.use(taskrouter)
 
 app.listen(port,()=>{
-    console.log("server is up on port " + port)
+    console.log(`server is update at port number ${port}`)
 })
 
 // const Task = require('./db/models/task')
-
+ 
 // // const main=async()=>{
 // //     const task = await Task.findById('6284d8aeae6efdb24a7c0f61')
 // //     await task.populate( 'owner' )         //.execPopulate(); :- this funtion is not used yet

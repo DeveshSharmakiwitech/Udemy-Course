@@ -1,4 +1,5 @@
 const nodemailer= require('nodemailer')
+const hbs = require('nodemailer-express-handlebars')
 
 const transport=nodemailer.createTransport({
     host :'smtp.gmail.com',
@@ -11,6 +12,11 @@ const transport=nodemailer.createTransport({
     }
 });
 
+transport.use('compile',hbs({
+    viewEngine:'express-handlebars',
+    viewPath:'./src/emails/views/'
+}));
+
 // Note:- Please click this usl first to run the program for 'Less security app access'
 
 const sendWelcomeEmail=(email,name)=>{
@@ -18,7 +24,13 @@ const sendWelcomeEmail=(email,name)=>{
         from:'devesh.sharma@kiwitech.com',
         to:email,
         subject:'Thanks for joining!',
-        text:`Welcome to the app, ${name}. Let me know how to get along with the app.`
+        text:`Welcome to the app, ${name}. Let me know how to get along with the app.`,
+        attachments:[
+            {
+                filename:'profile-pic.jpg', path:'./src/emails/images/profile-pic.jpg'
+            }
+        ],
+        template:'index'
     }
 
     transport.sendMail(mailoptions,function(error,info){

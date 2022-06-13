@@ -15,7 +15,7 @@ router.post('/users', async (req, res) => {
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })
     } catch (e) {
-        res.status(400).send(e)
+        res.status(400).send({error:'This email id is already register!',status:400})
     }
 })
 
@@ -36,7 +36,7 @@ router.post('/users/logout',auth,async(req,res)=>{
         })
         await req.user.save()
 
-        res.send()
+        res.send({user_logout:'Logout Succesfully!',status:200})
     }catch(e){
         res.status(500).send()
         console.log(e)
