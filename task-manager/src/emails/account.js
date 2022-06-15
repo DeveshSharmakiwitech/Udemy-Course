@@ -1,3 +1,4 @@
+const path = require('path')
 const nodemailer= require('nodemailer')
 const hbs = require('nodemailer-express-handlebars')
 
@@ -13,8 +14,13 @@ const transport=nodemailer.createTransport({
 });
 
 transport.use('compile',hbs({
-    viewEngine:'express-handlebars',
-    viewPath:'./src/emails/views/'
+    viewEngine:{
+        extname:".handlebars",
+        partialsDir: path.resolve('./views'),
+        defaultLayout:false,
+    },
+    viewPath: path.resolve('./views'),
+    extName:".handlebars",
 }));
 
 // Note:- Please click this usl first to run the program for 'Less security app access'
@@ -27,11 +33,17 @@ const sendWelcomeEmail=(email,name)=>{
         text:`Welcome to the app, ${name}. Let me know how to get along with the app.`,
         attachments:[
             {
-                filename:'profile-pic.jpg', path:'./src/emails/images/profile-pic.jpg'
+                filename:'profile-pic.jpg', path:'./src/emails/images/profile-pic.jpg',
+                cid:'pp'
+            },
+            {
+                filename:'sample-doc-file.doc', path:'./src/emails/images/sample-doc-file.doc',
             }
         ],
         template:'index'
     }
+
+ 
 
     transport.sendMail(mailoptions,function(error,info){
         if(error){
