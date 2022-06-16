@@ -13,9 +13,9 @@ router.post('/users', async (req, res) => {
         await user.save()
         sendWelcomeEmail(user.email,user.name)
         const token = await user.generateAuthToken()
-        res.status(201).send({ user, token })
+        res.status(201).send({message : 'User register successully', data:user, token, status : 201})
     } catch (e) {
-        res.status(400).send({error:'This email id is already register!',status:400})
+        res.status(400).send({message:'This email id is already register!', data:null ,status:400})
     }
 })
 
@@ -23,9 +23,9 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
-        res.send({ user, token })
+        res.status(200).send({message:'User login successfully', data:user, token, status : 200 })
     } catch (e) {
-        res.status(400).send()
+        res.status(400).send({message:'Enter the correct credidentials', data:null, status : 400 })
     }
 })
 
@@ -36,9 +36,9 @@ router.post('/users/logout',auth,async(req,res)=>{
         })
         await req.user.save()
 
-        res.send({user_logout:'Logout Succesfully!',status:200})
+        res.send({message:'Logout Successfully!',status:200})
     }catch(e){
-        res.status(500).send()
+        res.status(500).send({message:'Unable to communicate with server',status:500})
         console.log(e)
     }
 })
@@ -47,15 +47,20 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
     try{
         req.user.token=[]
         await req.user.save()
-        res.send()
+        res.status(200).send({message:'Logout All Successfully!', status:200})
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({message:'Unable to communicate with server',status:500})
     }
 })
 
 router.get('/users/me', auth, async (req, res) => {
-    res.send(req.user)
+    try{
+        res.status(200).send(req.user)
+    }catch(err){
+        res.status(400).send({message:'Data not found', data:null, status : 400 })
+    }
+    
 })
 
 router.get('/users/:id', async (req, res) => {
@@ -115,6 +120,17 @@ router.delete('/users/me',auth, async (req, res) => {
         res.status(500).send()
     }
 })
+
+router.post('/users/forget_password',async(req,res)=>{
+    try{
+
+    } catch(err){
+        res.status(400).send({msg:'mail have been send!'});
+    }
+})
+
+
+
 
 const upload = multer({
     limits:{
