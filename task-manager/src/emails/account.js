@@ -74,4 +74,23 @@ const sendCancelationEmail=(email,name)=>{
     })
 }
 
-module.exports={sendWelcomeEmail,sendCancelationEmail}
+const forgotPasswordEmail = (email,token)=>{
+    const mailoptions = {
+        from : 'devesh.sharma@kiwitech.com',
+        to:email,
+        subject:'Reset Password',
+        html:`<h2>Please click on given link to reset your password</h2>
+                <p>${process.env.Client_URL}/resetpassword/${token}</p>`
+    }
+
+    transport.sendMail(mailoptions,function(error,info){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log('email has been send',info.response)
+        }
+    })
+}
+
+module.exports={sendWelcomeEmail,sendCancelationEmail,forgotPasswordEmail}

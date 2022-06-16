@@ -1,9 +1,11 @@
 const express = require('express')
 const multer = require('multer')
+const jwt = require('jsonwebtoken')
+const lodash = require('lodash')
 const sharp = require('sharp')
 const User = require('../db/models/user')
 const auth = require('../middleware/auth')
-const {sendWelcomeEmail,sendCancelationEmail}=require('../emails/account')
+const {sendWelcomeEmail,sendCancelationEmail,forgotPasswordEmail}=require('../emails/account')
 const router = new express.Router()
 
 router.post('/users', async (req, res) => {
@@ -121,11 +123,66 @@ router.delete('/users/me',auth, async (req, res) => {
     }
 })
 
-router.post('/users/forget_password',async(req,res)=>{
+router.put('/users/forget_password',async(req,res)=>{
     try{
+        const user = await User.findOne(req.body)
+        
+        if(!user){
+            return res.status(400).send({message: 'Incorrect Email',status:400})
+        }
 
-    } catch(err){
-        res.status(400).send({msg:'mail have been send!'});
+        const token = await user.generateAuthToken()
+       
+        
+       user.updateOne({resetLink:token},function (err,success){ 
+            if(err){
+                return res.status(400).send({message:'Reset password link error',status:400});
+            }
+            else{
+                forgotPasswordEmail(user.email,token)
+                return res.status(200).send({message:'Email has been send, Kindly follow the instruction',status:200});
+            }
+        })
+    } 
+    catch(err){
+        console.log(err)
+        res.status(400).send({message:'mail have been not send!',status:400});
+    }
+})
+
+router.put('/users/reset_password',async(req,res)=>{
+    try{
+        const {resetLink, newPassword}=req.body;
+
+        if(resetLink){
+            await jwt.verify(resetLink, process.env.JWT_SECRET, function(err,decodedData){
+                if(err){
+                    return res.status(400).send({message:'Incorrect token or it is expired.',status:400})
+                }
+                User.findOne({resetLink},(err,user)=>{
+                    if(err){
+                        return res.status(400).send({message:'user with this token does not exits.',status:400})
+                    }
+
+                    const obj = {password:newPassword,resetLink:''}
+                    user = lodash.extend(user, obj);
+                    user.save((err,result)=>{
+                        if(err){
+                            return res.status(400).send({message:'Enter the Strong Password', status:400})
+                        } else{
+                            return res.status(200).send({message:'Your password has been changed', status:200})
+                        }
+                    })
+                    
+                })
+            })
+        }
+        else{
+            return res.status(401).send({message:'Authentication Error!!!',status:401})
+        }
+
+    }catch(err){
+        res.status(400).send({message:'Password can not reset',status:400})
     }
 })
 
