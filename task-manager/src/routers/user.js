@@ -139,6 +139,7 @@ router.put('/users/forget_password',async(req,res)=>{
                 return res.status(400).send({message:'Reset password link error',status:400});
             }
             else{
+                console.log(token)
                 forgotPasswordEmail(user.email,token)
                 return res.status(200).send({message:'Email has been send, Kindly follow the instruction',status:200});
             }
@@ -160,12 +161,14 @@ router.put('/users/reset_password',async(req,res)=>{
                     return res.status(400).send({message:'Incorrect token or it is expired.',status:400})
                 }
                 User.findOne({resetLink},(err,user)=>{
-                    if(err){
+                    if(err || !user ){
                         return res.status(400).send({message:'user with this token does not exits.',status:400})
                     }
 
                     const obj = {password:newPassword,resetLink:''}
                     user = lodash.extend(user, obj);
+                    // user.save()
+                    // res.status(200).send({message:'Your password has been changed', status:200})
                     user.save((err,result)=>{
                         if(err){
                             return res.status(400).send({message:'Enter the Strong Password', status:400})
