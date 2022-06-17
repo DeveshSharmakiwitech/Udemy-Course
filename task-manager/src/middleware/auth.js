@@ -11,6 +11,8 @@ const auth = async (req, res, next) => {
             throw new Error()
         }
 
+
+        // add user from payload
         req.token=token
         req.user = user
         next()
@@ -20,3 +22,4 @@ const auth = async (req, res, next) => {
 }
 
 module.exports = auth
+
