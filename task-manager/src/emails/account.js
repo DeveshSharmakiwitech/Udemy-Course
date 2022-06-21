@@ -26,7 +26,7 @@ transport.use('compile',hbs({
 // Note:- Please click this usl first to run the program for 'Less security app access'
 
 const sendWelcomeEmail=(email,name)=>{
-    const mailoptions={
+    const mailoptions1={
         from:'devesh.sharma@kiwitech.com',
         to:email,
         subject:'Thanks for joining!',
@@ -45,7 +45,7 @@ const sendWelcomeEmail=(email,name)=>{
 
  
 
-    transport.sendMail(mailoptions,function(error,info){
+    transport.sendMail(mailoptions1,function(error,info){
         if(error){
             console.log(error);
         }
@@ -57,16 +57,27 @@ const sendWelcomeEmail=(email,name)=>{
 }
 
 const sendCancelationEmail=(email,name)=>{
-    const mailoptions={
+    const transport=nodemailer.createTransport({
+        host :'smtp.gmail.com',
+        port:465,
+        secure:true,
+        requireTLS:true,
+        auth:{
+            user:'devesh.sharma@kiwitech.com',
+            pass:'Kiwi@2018'
+        }
+    });
+
+    const mailoptions2={
         from:'devesh.sharma@kiwitech.com',
         to:email,
         subject:'Sorry to see you go!',
         text:`Goodbye, ${name}. I hope to see you back sometime soon.`
     }
 
-    transport.sendMail(mailoptions,function(error,info){
+    transport.sendMail(mailoptions2,function(error,info){
         if(error){
-            console.log(error);
+            console.log('hi '+error);
         }
         else{
             console.log('email has been send',info.response)
