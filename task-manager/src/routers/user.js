@@ -12,10 +12,11 @@ router.post('/users', async (req, res) => {
     const user = new User(req.body)
 
     try {
+        
         await user.save()
         sendWelcomeEmail(user.email,user.name)
-        const token = await user.generateAuthToken()
-        res.status(201).send({message : 'User register successully', data:user, token, status : 201})
+        const token = await user.generateAuthToken()    //********* */
+        res.status(201).send({message : 'User register successully', data:user, token,status : 201})
     } catch (e) {
         res.status(400).send({message:'This email id is already register!', data:null ,status:400})
     }
@@ -23,10 +24,12 @@ router.post('/users', async (req, res) => {
 
 router.post('/users/login', async (req, res) => {
     try {
+        
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        const token = await user.generateAuthToken()
-        res.status(200).send({message:'User login successfully', data:user, token, status : 200 })
+        const token = await user.generateAuthToken()              //*********** */
+        res.status(200).send({message:'User login successfully', data:user,token, status : 200 })
     } catch (e) {
+       
         res.status(400).send({message:'Enter the correct credidentials', data:null, status : 400 })
     }
 })
@@ -58,9 +61,9 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
 
 router.get('/users/me', auth, async (req, res) => {
     try{
-        res.status(200).send(req.user)
+        res.status(200).send({message:'User Data found', data:req.user, status : 200 })
     }catch(err){
-        res.status(400).send({message:'Data not found', data:null, status : 400 })
+        res.status(400).send({message:'User Data not found', data:null, status : 400 })
     }
     
 })
@@ -126,7 +129,6 @@ router.delete('/users/me',auth, async (req, res) => {
 router.put('/users/forget_password',async(req,res)=>{
     try{
         const user = await User.findOne(req.body)
-        
         if(!user){
             return res.status(400).send({message: 'Incorrect Email',status:400})
         }
