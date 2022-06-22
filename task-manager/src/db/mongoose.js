@@ -6,7 +6,9 @@ mongoose.connect(process.env.Mongodb_url,{
     useNewUrlParser:true,
     // useCreateIndex:true  :- Not supported
     // userFindAndModify:false   :- Not supported
-})
+},
+mongoose.set('debug', true)
+)
 
 
 

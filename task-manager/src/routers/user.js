@@ -1,6 +1,7 @@
 const express = require('express')
 const multer = require('multer')
 const jwt = require('jsonwebtoken')
+const bcrypt=require('bcryptjs')
 const lodash = require('lodash')
 const sharp = require('sharp')
 const User = require('../db/models/user')
@@ -126,6 +127,8 @@ router.delete('/users/me',auth, async (req, res) => {
     }
 })
 
+//forgot password by link
+
 router.put('/users/forget_password',async(req,res)=>{
     try{
         const user = await User.findOne(req.body)
@@ -152,6 +155,8 @@ router.put('/users/forget_password',async(req,res)=>{
         res.status(400).send({message:'mail have been not send!',status:400});
     }
 })
+
+//reset password by link
 
 router.put('/users/reset_password',async(req,res)=>{
     try{
@@ -190,6 +195,75 @@ router.put('/users/reset_password',async(req,res)=>{
         res.status(400).send({message:'Password can not reset',status:400})
     }
 })
+
+
+//Forgot Password BY OTP
+
+// router.put('/users/forget_password',async(req,res)=>{
+//     try{
+//         const user = await User.findOne(req.body)
+//         if(!user){
+//             return res.status(400).send({message: 'Incorrect Email',status:400})
+//         }
+
+//         const token = await Math.floor((Math.random()*10000)+1)
+       
+        
+//        user.updateOne({resetLink:token},function (err,success){ 
+//             if(err){
+//                 return res.status(400).send({message:'Reset password OTP error',status:400});
+//             }
+//             else{
+//                 console.log(token)
+//                 forgotPasswordEmail(user.email,token)
+//                 return res.status(200).send({message:'Email has been send, Kindly follow the instruction',status:200});
+//             }
+//         })
+//     } 
+//     catch(err){
+//         console.log(err)
+//         res.status(400).send({message:'mail have been not send!',status:400});
+//     }
+// })
+
+// reset password by OTP
+
+// router.put('/users/reset_password',async(req,res)=>{
+//         try{
+//             const {resetLink, newPassword}=req.body;
+//             console.log({resetLink})
+//             const user = await User.findOne({resetLink: parseInt(resetLink,10)})  
+//             // console.log(user)
+//             if(!user){
+//                 return res.status(400).send({message:'user with this OTP does not exits.',status:400})
+//             } 
+//             // let obj = {password:newPassword,resetLink:''} 
+//             // console.log(typeof 'newPassword')
+//             // user = lodash.extend(user, obj);
+
+//             user.updateOne({ 
+//                 password:await bcrypt.hash(newPassword, 8),
+//                 resetLink:''
+//             },(err,result)=>{
+//                 if(err){
+//                     console.log(err)
+//                 }
+//             })
+              
+//             user.save((err,result)=>{
+//                 if(err){
+                               
+//                 return res.status(400).send({message:'Enter the Strong Password', status:400})
+//                 } else{
+//                 return res.status(200).send({message:'Your password has been changed', status:200})
+//                 }
+//                 })
+               
+//         }catch(err){
+//             console.log(err)
+//             res.status(400).send({message:'Password can not reset',status:400})
+//         }
+// })
 
 
 
