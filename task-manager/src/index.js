@@ -7,7 +7,43 @@ const userrouter=require('./routers/user')
 const taskrouter=require('./routers/task')
 
 const app=express()
+
+const swaggerJSDOC = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
+const options = {
+    definition: {
+        openapi : '3.0.0',
+        info : {
+            title: 'Udemy Node js Api Project for mongodb',
+            description: 'this is my learning',
+            version: '1.0.0'
+        },
+        servers:[
+            {
+            url : 'http://localhost:3001/'
+            }
+        ]
+    },
+    apis:['./mongodb.js']
+}
+
+const swaggerSpec = swaggerJSDOC(options)
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+
+
 const port=process.env.PORT 
+app.use(express.json())
+app.use(userrouter)
+app.use(taskrouter)
+
+app.listen(port,()=>{
+    console.log(`server is update at port number ${port}`)
+})
+
+
+
+
 
 // app.use((req,res, next )=>{
 //     if(req.type === 'get'){
@@ -55,13 +91,7 @@ const port=process.env.PORT
 //     res.status(400).send({error:error.message})
 // })
 
-app.use(express.json())
-app.use(userrouter)
-app.use(taskrouter)
 
-app.listen(port,()=>{
-    console.log(`server is update at port number ${port}`)
-})
 
 // const Task = require('./db/models/task')
  

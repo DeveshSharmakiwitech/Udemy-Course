@@ -6,8 +6,37 @@ const lodash = require('lodash')
 const sharp = require('sharp')
 const User = require('../db/models/user')
 const auth = require('../middleware/auth')
+
 const {sendWelcomeEmail,sendCancelationEmail,forgotPasswordEmail}=require('../emails/account')
 const router = new express.Router()
+
+const app=express()
+
+const swaggerJSDOC = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
+const options = {
+    definition: {
+        openapi : '3.0.0',
+        info : {
+            title: 'Udemy Node js Api Project for mongodb',
+            description: 'this is my learning',
+            version: '1.0.0'
+        },
+        servers:[
+            {
+            url : 'http://localhost:3001/'
+            }
+        ]
+    },
+    apis:['./mongodb.js']
+}
+
+const swaggerSpec = swaggerJSDOC(options)
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+
+
+
 
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
@@ -60,10 +89,26 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
     }
 })
 
+/**
+ * @swagger
+ * /users/me:
+ *  get:
+ *      summary: this api is used to create user
+ *      description: this api is used to create user
+ *      responses:
+ *          200:
+ *              description: to test post method
+ *              content:
+ *                  application/json
+ */
+
 router.get('/users/me', auth, async (req, res) => {
     try{
-        res.status(200).send({message:'User Data found', data:req.user, status : 200 })
-    }catch(err){
+        const users = req.user
+        const user = await User.findOne({_id:users})   
+
+        res.status(200).send({message:'User Data found', data:user, status : 200 })
+    } catch(err){
         res.status(400).send({message:'User Data not found', data:null, status : 400 })
     }
     
@@ -96,15 +141,16 @@ router.patch('/users/me',auth, async (req, res) => {
 
     try {
         // const user = await User.findById(req.params.id)
-
-        updates.forEach((update) => req.user[update] = req.body[update])
-        await req.user.save()
+        const users = req.user
+        const user = await User.findOne({_id:users}) 
+        updates.forEach((update) => user[update] = req.body[update])
+        await user.save()
 
         // if (!user) {
         //     return res.status(404).send()
         // }
 
-        res.send(req.user)
+        res.send(user)
     } catch (e) {
         res.status(400).send(e)
         console.log(e)
@@ -118,10 +164,11 @@ router.delete('/users/me',auth, async (req, res) => {
         // if (!user) {
         //     return res.status(404).send()
         // }
-
-        await req.user.remove()
-        sendCancelationEmail(req.user.email,req.user.name)
-        res.send(req.user)
+        const users = req.user
+        const user = await User.findOne({_id:users}) 
+        await user.remove()
+        sendCancelationEmail(user.email,user.name)
+        res.send(user)
     } catch (e) {
         res.status(500).send()
     }
@@ -282,9 +329,11 @@ const upload = multer({
 })
 
 router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
+    const users = req.user
+    const user = await User.findOne({_id:users}) 
     const buffer=await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
-    req.user.avatar=buffer
-    await req.user.save()
+    user.avatar=buffer
+    await user.save()
     res.send()
 },(error,req,res,next)=>{
     res.status(400).send({error:error.message})
@@ -292,8 +341,10 @@ router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
 
 
 router.delete('/users/me/avatar',auth,async(req,res)=>{
-    req.user.avatar=undefined
-    await req.user.save()
+    const users = req.user
+    const user = await User.findOne({_id:users}) 
+    user.avatar=undefined
+    await user.save()
     res.send()
 })
 
