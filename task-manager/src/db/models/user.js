@@ -51,7 +51,7 @@ const userSchema=new mongoose.Schema({
     tokens:[{
         token:{
             type:String,
-            required:true
+            required:true,
         }
     }],
     avatar:{
@@ -82,8 +82,27 @@ userSchema.methods.generateAuthToken = async function(){
     const user=this
     const token=jwt.sign({_id:user._id.toString() }, process.env.JWT_SECRET,{expiresIn:'20m'})
 
-    user.tokens=user.tokens.concat({token})
-    await user.save()
+    // user.tokens=user.tokens.concat({token})
+
+    // user.updateOne({'$push':{
+    //     'tokens':{
+    //         token:token.toString()
+    //     }
+    // }},(err,result)=>{
+    //     if(err){
+    //         console.log('update user err ',err)
+    //     }
+    // })
+
+    // user.updateOne(
+    //     { $set: {"tokens.$[token]":"token"}}
+    //     ,(err,result)=>{
+    //             if(err){
+    //                 console.log('update user err=> ',err)
+    //             }
+    //         })
+
+    // await user.save()
     return token
 
 }

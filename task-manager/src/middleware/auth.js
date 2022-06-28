@@ -6,15 +6,16 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '')
         // console.log(token)
         const decoded = jwt.verify(token, process.env.JWT_SECRET)                 // verify token
-        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })      // find user data
+        // const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })      // find user data
+        console.log("decoded id ",decoded._id)
 
-        if (!user) {
-            throw new Error()
-        }
+        // if (!user) {
+        //     throw new Error()
+        // }
         
         // add user from payload
         // req.token=token
-        req.user =  user._id
+        req.user =  decoded._id
         next()
     } catch (e) {
         console.log('auth err  ',e)

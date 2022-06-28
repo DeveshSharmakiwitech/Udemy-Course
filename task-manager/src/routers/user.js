@@ -33,7 +33,7 @@ const options = {
 }
 
 const swaggerSpec = swaggerJSDOC(options)
-app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+router.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 
 
 
@@ -56,7 +56,8 @@ router.post('/users/login', async (req, res) => {
     try {
         
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        const token = await user.generateAuthToken()              //*********** */
+        const token = await user.generateAuthToken() 
+                  //*********** */
         res.status(200).send({message:'User login successfully', data:user,token, status : 200 })
     } catch (e) {
        
@@ -66,10 +67,12 @@ router.post('/users/login', async (req, res) => {
 
 router.post('/users/logout',auth,async(req,res)=>{
     try{
-        req.user.tokens=req.user.tokens.filter((token)=>{
+        const users = req.user
+        const user = await User.findOne({_id:users})
+        user.tokens=user.tokens.filter((token)=>{
         return token.token!==req.token
         })
-        await req.user.save()
+        await user.save()
 
         res.send({message:'Logout Successfully!',status:200})
     }catch(e){
@@ -80,8 +83,10 @@ router.post('/users/logout',auth,async(req,res)=>{
 
 router.post('/users/logoutAll',auth,async(req,res)=>{
     try{
-        req.user.token=[]
-        await req.user.save()
+        const users = req.user
+        const user = await User.findOne({_id:users})
+        user.tokens=[]
+        await user.save()
         res.status(200).send({message:'Logout All Successfully!', status:200})
     }
     catch(e){
@@ -91,8 +96,12 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
 
 /**
  * @swagger
- * /users/me:
- *  get:
+ * tags:
+ *  name: Main
+ *  description: this is for the main Apis
+ *  /users/me:
+ *   get:
+ *      tags: [Main]
  *      summary: this api is used to create user
  *      description: this api is used to create user
  *      responses:
