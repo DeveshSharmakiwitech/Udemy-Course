@@ -6,6 +6,7 @@ const lodash = require('lodash')
 const sharp = require('sharp')
 const User = require('../db/models/user')
 const auth = require('../middleware/auth')
+const fs = require('fs')
 
 const {sendWelcomeEmail,sendCancelationEmail,forgotPasswordEmail}=require('../emails/account')
 const router = new express.Router()
@@ -69,10 +70,18 @@ router.post('/users/logout',auth,async(req,res)=>{
     try{
         const users = req.user
         const user = await User.findOne({_id:users})
-        user.tokens=user.tokens.filter((token)=>{
-        return token.token!==req.token
-        })
-        await user.save()
+
+           //Token logout by fs
+        await fs.unlink(user._id+'.txt', function (err) {
+            if (err) throw err;
+            console.log('Token File deleted!');
+          });
+        
+        //Token logout by db
+        // user.tokens=user.tokens.filter((token)=>{
+        // return token.token!==req.token
+        // })
+        // await user.save()
 
         res.send({message:'Logout Successfully!',status:200})
     }catch(e){

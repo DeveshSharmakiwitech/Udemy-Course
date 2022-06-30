@@ -3,6 +3,7 @@ const validator=require('validator')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const Task = require('./task')
+const fs = require('fs')
 // const Task=require('./src/db/models/task')
 
 const userSchema=new mongoose.Schema({
@@ -48,12 +49,12 @@ const userSchema=new mongoose.Schema({
         data: String,
         default:''
     },
-    tokens:[{
-        token:{
-            type:String,
-            required:true,
-        }
-    }],
+    // tokens:[{                            // if Token is not store in db then comment tokens
+    //     token:{
+    //         type:String,
+    //         required:true,
+    //     }
+    // }],
     avatar:{
         type:Buffer
     }
@@ -81,7 +82,16 @@ userSchema.methods.toJSON=function(){
 userSchema.methods.generateAuthToken = async function(){
     const user=this
     const token=jwt.sign({_id:user._id.toString() }, process.env.JWT_SECRET,{expiresIn:'20m'})
+    
+    
+    // Token save in  fs
+    const file_id = user._id
+    await fs.writeFile( file_id+".txt" , token , function (err) {
+        if (err) throw err;
+      });
 
+
+     // token save in db
     // user.tokens=user.tokens.concat({token})
 
     // user.updateOne({'$push':{
@@ -103,6 +113,7 @@ userSchema.methods.generateAuthToken = async function(){
     //         })
 
     // await user.save()
+
     return token
 
 }
