@@ -4,6 +4,7 @@ const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const Task = require('./task')
 const fs = require('fs')
+const ls = require('local-storage');
 // const Task=require('./src/db/models/task')
 
 const userSchema=new mongoose.Schema({
@@ -83,6 +84,8 @@ userSchema.methods.generateAuthToken = async function(){
     const user=this
     const token=jwt.sign({_id:user._id.toString() }, process.env.JWT_SECRET,{expiresIn:'20m'})
     
+ 
+
     
     // Token save in  fs
     const file_id = user._id

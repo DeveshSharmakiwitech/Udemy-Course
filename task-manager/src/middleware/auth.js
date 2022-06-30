@@ -21,7 +21,6 @@ const auth = async (req, res, next) => {
         }else{
             console.log('token is not matched!')
             return res.status(401).send({ error: 'Please authenticate.' })
-
         }
         
         //Token verify by db
