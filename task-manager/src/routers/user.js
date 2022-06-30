@@ -61,7 +61,7 @@ router.post('/users/login', async (req, res) => {
                   //*********** */
         res.status(200).send({message:'User login successfully', data:user,token, status : 200 })
     } catch (e) {
-       
+        console.log("error => ",e)
         res.status(400).send({message:'Enter the correct credidentials', data:null, status : 400 })
     }
 })
