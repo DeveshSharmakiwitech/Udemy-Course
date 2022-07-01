@@ -10,46 +10,78 @@ const fs = require('fs')
 
 const {sendWelcomeEmail,sendCancelationEmail,forgotPasswordEmail}=require('../emails/account')
 const router = new express.Router()
-
-const app=express()
-
-const swaggerJSDOC = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
+const swaggerSpecs = require('../swagger')
 
-const options = {
-    definition: {
-        openapi : '3.0.0',
-        info : {
-            title: 'Udemy Node js Api Project for mongodb',
-            description: 'this is my learning',
-            version: '1.0.0'
-        },
-        servers:[
-            {
-            url : 'http://localhost:3001/'
-            }
-        ]
-    },
-    apis:['./mongodb.js']
-}
-
-const swaggerSpec = swaggerJSDOC(options)
-router.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs))
 
 
-
-
+/**
+   * @swagger
+   * /users:
+   *   post:
+   *     tags:
+   *       - USER
+   *     description: userSignUp Api
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: name
+   *         description: Name is required.
+   *         in: body
+   *         required: true
+   *       - name: email
+   *         description: email
+   *         in: body
+   *         required: true
+   *       - name: age
+   *         description: age
+   *         in: body
+   *         required: false
+   *       - name: password
+   *         description: password is required
+   *         in: body
+   *         required: true
+   *     responses:
+   *       200:
+   *         description: Add or update user profile
+   *         schema:
+   *           type: object
+   *           properties:
+   *             message:
+   *               type: string
+   *               example: 'Success'
+   *       404:
+   *         description: Unprocessable Entity
+   *         schema:
+   *           type: object
+   *           properties:
+   *             status:
+   *               type: false
+   *               example: true
+   *             message:
+   *               type: string
+   *               example: The request was unacceptable, often due to missing a required parameter.
+   */
 router.post('/users', async (req, res) => {
-    const user = new User(req.body)
+   try{
+    console.log("hi.........",req.body)
+       const user = new User ({
+         name:req.body.name,
+         email: req.body.email,
+         age: req.body.age,
+         password: req.body.password,    
+       })
 
-    try {
-        
-        await user.save()
+       await  user.save(user)
         sendWelcomeEmail(user.email,user.name)
-        const token = await user.generateAuthToken()    //********* */
-        res.status(201).send({message : 'User register successully', data:user, token,status : 201})
-    } catch (e) {
-        res.status(400).send({message:'This email id is already register!', data:null ,status:400})
+        const token = await user.generateAuthToken() 
+       return res.status(201).send({message : 'User register successfully', data:user, token,status : 201})
+    } 
+    
+    catch (e) {
+        console.log("error  =>",e)
+       return res.status(400).send({message:'This email id is already register!', data:null ,status:400})
     }
 })
 
@@ -103,22 +135,6 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
     }
 })
 
-/**
- * @swagger
- * tags:
- *  name: Main
- *  description: this is for the main Apis
- *  /users/me:
- *   get:
- *      tags: [Main]
- *      summary: this api is used to create user
- *      description: this api is used to create user
- *      responses:
- *          200:
- *              description: to test post method
- *              content:
- *                  application/json
- */
 
 router.get('/users/me', auth, async (req, res) => {
     try{

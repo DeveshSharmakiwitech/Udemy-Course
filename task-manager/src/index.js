@@ -5,35 +5,14 @@ const User=require('./db/models/user')
 const Task=require('./db/models/task')
 const userrouter=require('./routers/user')
 const taskrouter=require('./routers/task')
+const bodyParser = require("body-parser")
 
 const app=express()
-
-const swaggerJSDOC = require('swagger-jsdoc')
-const swaggerUi = require('swagger-ui-express')
-
-const options = {
-    definition: {
-        openapi : '3.0.0',
-        info : {
-            title: 'Udemy Node js Api Project for mongodb',
-            description: 'this is my learning',
-            version: '1.0.0'
-        },
-        servers:[
-            {
-            url : 'http://localhost:3001/'
-            }
-        ]
-    },
-    apis:['./mongodb.js']
-}
-
-const swaggerSpec = swaggerJSDOC(options)
-app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 
 
 const port=process.env.PORT 
 app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(userrouter)
 app.use(taskrouter)
 
