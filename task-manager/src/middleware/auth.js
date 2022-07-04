@@ -9,19 +9,19 @@ const auth = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)       // verify token
 
         //Token verify by fs
-        const fileToken = fs.readFileSync(decoded._id+'.txt',{encoding: 'utf-8'}, function(err, data) {    
-        if (!err) {
-            return data
-        } 
-        });
+        // const fileToken = fs.readFileSync(decoded._id+'.txt',{encoding: 'utf-8'}, function(err, data) {    
+        // if (!err) {
+        //     return data
+        // } 
+        // });
         // console.log("fileToken => ", fileToken)
         // console.log("decoded id ",decoded._id)
-        if(fileToken == token){
-            console.log('token is match!')
-        }else{
-            console.log('token is not matched!')
-            return res.status(401).send({ error: 'Please authenticate.' })
-        }
+        // if(fileToken == token){
+        //     console.log('token is match!')
+        // }else{
+        //     console.log('token is not matched!')
+        //     return res.status(401).send({ error: 'Please authenticate.' })
+        // }
         
         //Token verify by db
         // const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })      // find user data

@@ -88,11 +88,11 @@ userSchema.methods.generateAuthToken = async function(){
 
     
     // Token save in  fs
-    const file_id = user._id
+    // const file_id = user._id
 
-    await fs.writeFile( file_id+".txt" , token , function (err) {
-        if (err) throw err;
-      });
+    // await fs.writeFile( file_id+".txt" , token , function (err) {
+    //     if (err) throw err;
+    //   });
 
 
      // token save in db

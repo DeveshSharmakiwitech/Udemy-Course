@@ -144,7 +144,7 @@ router.post('/users/login', async (req, res) => {
 })
 
 /**
- * @swagger
+ * @swag
  * /users/logout:
  *  post:
  *      description: logout user
@@ -641,17 +641,89 @@ const upload = multer({
     }
 })
 
+/**
+ * @swagger
+ * /users/me/avatar:
+ *   post:
+ *     description:  add photo user.
+ *     summary: add photo user profile.
+ *     operationId: add photo_user
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - USER
+ *     parameters:
+ *       - name: avatar
+ *         description: add photo of the user.
+ *         required: false
+ *         in: formData
+ *         type: file
+ *     responses:
+ *       200:
+ *         description: add photo user profile
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to required  authentication.
+ */
+
 router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
     const users = req.user
     const user = await User.findOne({_id:users}) 
     const buffer=await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
     user.avatar=buffer
     await user.save()
-    res.send()
+    return res.status(200).send({message:"successfully uploaded"})
 },(error,req,res,next)=>{
+    
     res.status(400).send({error:error.message})
 })
 
+/**
+ * @swagger
+ * /users/me/avatar:
+ *   delete:
+ *     description:  delete user Profile photo.
+ *     summary: delete user profile photo
+ *     operationId: delete user profile photo
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - USER
+ *     responses:
+ *       200:
+ *         description:  user profile photo by token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unauthenticated Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due unauthenticated a required parameter.
+ */
 
 router.delete('/users/me/avatar',auth,async(req,res)=>{
     const users = req.user
