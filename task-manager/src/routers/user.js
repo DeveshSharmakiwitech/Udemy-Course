@@ -20,31 +20,34 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs))
    * @swagger
    * /users:
    *   post:
+   *     description: user SignUp Api
+   *     summary: Create user profile
    *     tags:
-   *       - USER
-   *     description: userSignUp Api
-   *     produces:
-   *       - application/json
+   *     - USER
    *     parameters:
    *       - name: name
-   *         description: Name is required.
-   *         in: body
+   *         description: Name
+   *         in: formData
    *         required: true
+   *         type: string
    *       - name: email
    *         description: email
-   *         in: body
+   *         in: formData
    *         required: true
+   *         type: string
    *       - name: age
    *         description: age
-   *         in: body
+   *         in: formData
    *         required: false
+   *         type: number
    *       - name: password
    *         description: password is required
-   *         in: body
+   *         in: formData
    *         required: true
+   *         type: string
    *     responses:
    *       200:
-   *         description: Add or update user profile
+   *         description: Add user profile
    *         schema:
    *           type: object
    *           properties:
@@ -65,7 +68,7 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs))
    */
 router.post('/users', async (req, res) => {
    try{
-    console.log("hi.........",req.body)
+    
        const user = new User ({
          name:req.body.name,
          email: req.body.email,
@@ -80,10 +83,52 @@ router.post('/users', async (req, res) => {
     } 
     
     catch (e) {
-        console.log("error  =>",e)
+        
        return res.status(400).send({message:'This email id is already register!', data:null ,status:400})
     }
 })
+
+/**
+ * @swagger
+ * /users/login:
+ *  post:
+ *      description: Login user
+ *      operationId: login User
+ *      summary: login user by email
+ *      tags:
+ *      - USER
+ *      parameters:
+ *       - name: email
+ *         description: user email.
+ *         required: true
+ *         in: formData
+ *         type: string
+ *       - name: password
+ *         description: user Password.
+ *         required: true
+ *         in: formData
+ *         type: string
+ *      responses:
+ *       200:
+ *         description: Login user profile
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to unCorrect a required parameter.
+ */
 
 router.post('/users/login', async (req, res) => {
     try {
@@ -97,6 +142,40 @@ router.post('/users/login', async (req, res) => {
         res.status(400).send({message:'Enter the correct credidentials', data:null, status : 400 })
     }
 })
+
+/**
+ * @swagger
+ * /users/logout:
+ *  post:
+ *      description: logout user
+ *      operationId: logout User
+ *      summary: logout user by email
+ *      tags:
+ *      - USER
+ *      security:
+ *      - Basic: []
+ *      responses:
+ *       200:
+ *         description: logout user profile
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to authorization parameter.
+ */
+
 
 router.post('/users/logout',auth,async(req,res)=>{
     try{
@@ -135,6 +214,38 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
     }
 })
 
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     description:  Show user Profile.
+ *     summary: show user profile.
+ *     operationId: user profile
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - USER
+ *     responses:
+ *       200:
+ *         description: Show user profile by token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unauthenticated Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due unauthenticated a required parameter.
+ */
 
 router.get('/users/me', auth, async (req, res) => {
     try{
@@ -164,6 +275,60 @@ router.get('/users/:id', async (req, res) => {
     }
 })
 
+/**
+ * @swagger
+ * /users/me:
+ *   patch:
+ *     description:  update user.
+ *     summary: Update user profile.
+ *     operationId: update_user
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - USER
+ *     parameters:
+ *       - name: name
+ *         description: name of the user.
+ *         required: false
+ *         in: formData
+ *         type: string
+ *       - name: email
+ *         description: email of the user.
+ *         required: false
+ *         in: formData
+ *         type: string
+ *       - name: password
+ *         description: user password.
+ *         required: false
+ *         in: formData
+ *         type: string
+ *       - name: age
+ *         description: user address.
+ *         required: false
+ *         in: formData
+ *         type: number
+ *     responses:
+ *       200:
+ *         description: update user profile
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to required  authentication.
+ */
+
 router.patch('/users/me',auth, async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password', 'age']
@@ -191,6 +356,39 @@ router.patch('/users/me',auth, async (req, res) => {
     }
 })
 
+/**
+ * @swagger
+ * /users/me:
+ *   delete:
+ *     description:  delete user Profile.
+ *     summary: delete user profile
+ *     operationId: delete user profile
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - USER
+ *     responses:
+ *       200:
+ *         description:  user profile by token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unauthenticated Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due unauthenticated a required parameter.
+ */
+
 router.delete('/users/me',auth, async (req, res) => {
     try {
         // const user = await User.findByIdAndDelete(req.user.id)
@@ -209,6 +407,43 @@ router.delete('/users/me',auth, async (req, res) => {
 })
 
 //forgot password by link
+
+/**
+ * @swagger
+ * /users/forget_password:
+ *  put:
+ *      description: forgot password user
+ *      operationId: forgot password User
+ *      summary: forgot password user by email
+ *      tags:
+ *      - USER
+ *      parameters:
+ *       - name: email
+ *         description: user rollNumber.
+ *         required: true
+ *         in: formData
+ *         type: string
+ *      responses:
+ *       200:
+ *         description: Send Email for forgot password
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to un_correct a required parameter.
+ */
 
 router.put('/users/forget_password',async(req,res)=>{
     try{
@@ -239,9 +474,53 @@ router.put('/users/forget_password',async(req,res)=>{
 
 //reset password by link
 
+/**
+ * @swagger
+ * /users/reset_password:
+ *  put:
+ *      description: reset password user
+ *      operationId: reset password User
+ *      summary: reset password user by email
+ *      tags:
+ *      - USER
+ *      parameters:
+ *       - name: resetLink
+ *         description: link
+ *         required: true
+ *         in: formData
+ *         type: string
+ *       - name: newPassword
+ *         description: New Password
+ *         required: true
+ *         in: formData
+ *         type: string
+ *      responses:
+ *       200:
+ *         description: reset password by email.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unprocessable Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due to incorrect link.
+ */
+
 router.put('/users/reset_password',async(req,res)=>{
     try{
-        const {resetLink, newPassword}=req.body;
+        const resetLink =req.body.resetLink
+        const newPassword = req.body.newPassword
+        console.log("reset link =>",resetLink)
 
         if(resetLink){
             await jwt.verify(resetLink, process.env.JWT_SECRET, function(err,decodedData){

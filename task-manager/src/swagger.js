@@ -4,7 +4,7 @@ const options = {
     definition:{
         info:{
             title:"Udemy Course tutorial",
-            version:'1.0.0',
+            version:'3.0.0',
         },
         schemes: [
             'http',
